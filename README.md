@@ -13,16 +13,14 @@ Install packages.
 .venv ❯ pip install -r requirements.txt
 ```
 
+### Environment variables
+
+Copy .env.example to .env for configuration variables.
+
+- Get your arduino port with the following command: `python -m serial.tools.list_ports`
+
 ## Run
 
 ```sh
 .venv ❯ python main.py
-```
-
-## Help
-
-List serial devices
-
-```sh
-.venv ❯ python -m serial.tools.list_ports
 ```
