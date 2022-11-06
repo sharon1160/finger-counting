@@ -1,6 +1,10 @@
+import os
 import serial
+from dotenv import load_dotenv
 
-serial_arduino = serial.Serial("/dev/cu.usbmodem21301", 9600)
+load_dotenv('.env')
+
+serial_arduino = serial.Serial(os.getenv('ARDUINO_PORT'), 9600)
 
 while True:
     number = input("Give me a number: ")
