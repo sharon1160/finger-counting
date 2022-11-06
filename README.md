@@ -12,3 +12,17 @@ Install packages.
 ```sh
 .venv ❯ pip install -r requirements.txt
 ```
+
+## Run
+
+```sh
+.venv ❯ python main.py
+```
+
+## Help
+
+List serial devices
+
+```sh
+.venv ❯ python -m serial.tools.list_ports
+```
