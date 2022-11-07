@@ -1,7 +1,6 @@
 import mediapipe as mp
 import cv2
 
-#Initializations: static code
 mpHands = mp.solutions.hands
 mpDraw = mp.solutions.drawing_utils
 
@@ -18,29 +17,28 @@ class Detector:
 
     def findHandLandMarks(self, image, handNumber=0, draw=False):
         originalImage = image
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # mediapipe needs RGB
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # mediapipe requiere RGB
         results = self.hands.process(image)
-        landMarkList = []
-
+        hand_list=[]
+        
         if results.multi_handedness:
-            label = results.multi_handedness[handNumber].classification[0].label  # label gives if hand is left or right
-            #account for inversion in webcams
-            if label == "Left":
-                label = "Right"
-            elif label == "Right":
-                label = "Left"
+            for i in range(len(results.multi_handedness)):
+                landMarkList = []
+                label = results.multi_handedness[i].classification[0].label  # se invierte las etiquetas por que la camara esta en modo reflejo
+                if label == "Left":
+                    label = "Right"
+                elif label == "Right":
+                    label = "Left"
 
+                hand = results.multi_hand_landmarks[i] #results.multi_hand_landmarks retorna los landmarks 
 
-        if results.multi_hand_landmarks:  # returns None if hand is not found
-            hand = results.multi_hand_landmarks[handNumber] #results.multi_hand_landmarks returns landMarks for all the hands
+                for id, landMark in enumerate(hand.landmark):
+                    # landMark holds x,y,z ratios of single landmark
+                    imgH, imgW, imgC = originalImage.shape  # height, width, channel for image
+                    xPos, yPos = int(landMark.x * imgW), int(landMark.y * imgH)
+                    landMarkList.append([id, xPos, yPos, label])
 
-            for id, landMark in enumerate(hand.landmark):
-                # landMark holds x,y,z ratios of single landmark
-                imgH, imgW, imgC = originalImage.shape  # height, width, channel for image
-                xPos, yPos = int(landMark.x * imgW), int(landMark.y * imgH)
-                landMarkList.append([id, xPos, yPos, label])
-
-            if draw:
-                mpDraw.draw_landmarks(originalImage, hand, mpHands.HAND_CONNECTIONS)
-
-        return landMarkList
+                if draw:
+                    mpDraw.draw_landmarks(originalImage, hand, mpHands.HAND_CONNECTIONS)
+                hand_list.append(landMarkList)
+        return hand_list

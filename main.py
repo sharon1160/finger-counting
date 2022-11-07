@@ -14,37 +14,34 @@ webcamFeed = cv2.VideoCapture(0)
 
 while True:
     status, image = webcamFeed.read()
-    handLandmarks = handDetector.findHandLandMarks(image=image, draw=True)
+    hands = handDetector.findHandLandMarks(image=image, draw=True)
     count = 0
+    for handLandmarks in hands:
 
-    if (len(handLandmarks) != 0):
-        #we will get y coordinate of finger-tip and check if it lies above middle landmark of that finger
-        #details: https://google.github.io/mediapipe/solutions/hands
+        if (len(handLandmarks) != 0):
+
+            if handLandmarks[4][3] == "Right":
+                if handLandmarks[5][1]<handLandmarks[17][1] and handLandmarks[4][1] < handLandmarks[3][1]:  # Pulgar Derecho
+                    count = count + 1
+                elif handLandmarks[5][1]>handLandmarks[17][1] and handLandmarks[4][1] > handLandmarks[3][1]:
+                    count = count + 1
+            elif handLandmarks[4][3] == "Left":
+                if handLandmarks[5][1]<handLandmarks[17][1] and handLandmarks[4][1] < handLandmarks[3][1]:  #Pulgar Izquierdo
+                    count = count + 1
+                elif handLandmarks[5][1]>handLandmarks[17][1] and handLandmarks[4][1] > handLandmarks[3][1]:
+                    count = count + 1
+            if handLandmarks[8][2] < handLandmarks[6][2]:  #Index indice
+                count = count + 1
+            if handLandmarks[12][2] < handLandmarks[10][2]:  #Dedo medio
+                count = count + 1
+            if handLandmarks[16][2] < handLandmarks[14][2]:  #Dedo Anular
+                count = count + 1
+            if handLandmarks[20][2] < handLandmarks[18][2]:  #Dedo Menhique
+                count = count + 1
+
+        serial_arduino.write(str(count).encode('ascii'))
 
         
-        
-        if handLandmarks[4][3] == "Right":
-            if handLandmarks[5][1]<handLandmarks[17][1] and handLandmarks[4][1] < handLandmarks[3][1]:  #Right Thumb
-                count = count + 1
-            elif handLandmarks[5][1]>handLandmarks[17][1] and handLandmarks[4][1] > handLandmarks[3][1]:
-                count = count + 1
-        elif handLandmarks[4][3] == "Left":
-            if handLandmarks[5][1]<handLandmarks[17][1] and handLandmarks[4][1] < handLandmarks[3][1]:  #Left Thumb
-                count = count + 1
-            elif handLandmarks[5][1]>handLandmarks[17][1] and handLandmarks[4][1] > handLandmarks[3][1]:
-                count = count + 1
-        if handLandmarks[8][2] < handLandmarks[6][2]:  #Index finger
-            count = count + 1
-        if handLandmarks[12][2] < handLandmarks[10][2]:  #Middle finger
-            count = count + 1
-        if handLandmarks[16][2] < handLandmarks[14][2]:  #Ring finger
-            count = count + 1
-        if handLandmarks[20][2] < handLandmarks[18][2]:  #Little finger
-            count = count + 1
-
-    serial_arduino.write(str(count).encode('ascii'))
-
-    
     image=cv2.flip(image,1)
     cv2.putText(image, str(count), (45, 375), cv2.FONT_HERSHEY_SIMPLEX, 5,(255, 0, 0), 25)
     #cv2.putText(image, str(handLandmarks[4][3]), (45, 375), cv2.FONT_HERSHEY_SIMPLEX, 5,(255, 0, 0), 25)
