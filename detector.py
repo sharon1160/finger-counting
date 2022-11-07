@@ -18,7 +18,7 @@ class Detector:
 
     def findHandLandMarks(self, image, handNumber=0, draw=False):
         originalImage = image
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # mediapipe needs RGB
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # mediapipe needs RGB
         results = self.hands.process(image)
         landMarkList = []
 
